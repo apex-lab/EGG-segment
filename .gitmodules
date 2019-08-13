@@ -1,0 +1,3 @@
+[submodule "xdf-Matlab"]
+	path = xdf-Matlab
+	url = https://github.com/xdf-modules/xdf-Matlab.git
