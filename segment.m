@@ -18,5 +18,6 @@ markers = get_markers(egg, windows); % exact timestamps of voicing onset
 
 %%% save as mat object that can be uploaded to EEGLab
 tags = to_eeglab(markers):
-saveName = strcat(char(filename)(1:end-3), "_tags.mat");
+tmp = char(filename);
+saveName = strcat(tmp(1:end-3), "_tags.mat");
 save(savename, tags); % overwrites file "savename" if already there
