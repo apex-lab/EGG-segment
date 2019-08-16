@@ -17,8 +17,6 @@ egg = xdf{stream}.time_series(channel,:);
 windows = get_windows(egg); % candidate windows to search for voicing onset
 markers = get_markers(egg, windows); % exact timestamps of voicing onset
 
-[q,r] = findchangepts(egg, 'Statistic', 'rms', 'MaxNumChanges');
-findchangepts(egg);%, 'Statistic', 'rms', 'MaxNumChanges')
 %% save as mat object that can be uploaded to EEGLab
 tags = to_eeglab(matlab);
 tmp = char(filepath);
