@@ -45,9 +45,10 @@ AMP = COEF(4);
 % - <pathEGG>: string containing path to folder containing EGG file
 SIG = [];
 % finding out the number of channels in signal
-siz = wavread([pathEGG EGGfilename],'size');
+tmp = audioread([pathEGG EGGfilename]);
+siz = size(tmp);
 % if there is a single channel: no difficulty.
-[SIG,FS,NBITS] = wavread([pathEGG EGGfilename],[round(time(1) * COEF(1)) round(time(2) * COEF(1))]);
+[SIG,FS] = audioread([pathEGG EGGfilename],[round(time(1) * COEF(1)) round(time(2) * COEF(1))]);
 % if the signal contains two or more channels: choosing the second channel
 % (right channel of stereo file) by convention.
 if siz(2) > 1

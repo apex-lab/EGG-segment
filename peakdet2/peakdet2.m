@@ -69,7 +69,7 @@ switch action
         [EGGfilename,pathEGG] = uigetfile('*.*','Please choose the EGG file to be downloaded');
 
         % finding out the characteristics of the sound file
-        [Y,FS,NBITS] = wavread([pathEGG EGGfilename]);
+        [Y,FS] = audioread([pathEGG EGGfilename]);
         player = audioplayer(Y(:,1),FS);
 
 
@@ -145,7 +145,7 @@ switch action
 
 
 
-            [SIGbis,FS,NBITS] = wavread([pathEGG EGGfilename],[round(time(1) * COEF(1)) round(time(2) * COEF(1))]);
+            [SIGbis,FS] = audioread([pathEGG EGGfilename],[round(time(1) * COEF(1)) round(time(2) * COEF(1))]);
             h1 = figure(1);
             clf
             title_mod = sprintf('EGG preview of item %d',i);
@@ -581,7 +581,7 @@ switch action
                     % Manual corrections if desired
                     while corr == 1
                         % showing the Fo values
-                        % (after 90° rotation so the indices will be displayed)
+                        % (after 90ï¿½ rotation so the indices will be displayed)
                         if ~isempty(numb)
                             disp(['Item that carries label ' num2str(numb(i)) '.'])
                         else
@@ -655,7 +655,7 @@ switch action
                             while corr == 1
                                 % If not all values have been excluded: listing the Oq values
                                 % obtained by the method chosen
-                                % (after 90° rotation so the indices will be displayed)
+                                % (after 90ï¿½ rotation so the indices will be displayed)
                                 disp('Open quotient values : ')
                                 disp(rot90(datafile(:,10)))
                                 disp('If values need to be suppressed, enter their index in vector:')
