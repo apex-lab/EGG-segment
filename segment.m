@@ -3,7 +3,7 @@
 % Tested with Matlab Version 9.6.0.1150989 (R2019a) Update 4
 
 %% hard coded variables
-filepath = "/home/john/Documents/EGG_pilot/sub-marisa/ses-S001/eeg/sub-marisa_ses-S001_task-2_acq-eeg-egg_run-001_eeg.xdf";
+filepath = "/home/john/Documents/EGG_pilot/sub-marisa/ses-S001/eeg/sub-marisa_ses-S001_task-8_acq-eeg-egg_run-001_eeg.xdf";
 stream = 2; % which stream in the xdf file is EGG/audio
 channel = 1; % which channel of EGG/audio is EGG
 
@@ -13,21 +13,30 @@ addpath("functions", "peakdet2", "xdf-Matlab")
 xdf = load_xdf(filepath); 
 egg = xdf{stream}.time_series(channel,:);
 
+%% reverse filter to correct phase distortion from hardware filter
+x = fliplr(egg); % we apply forward filter to reverse-time EGG
+% single pole reverse filter 
+y = highpass(x, 40, 48000);
+egg = fliplr(y);
+clear x y
+
+%% median filter to suppress device noise
+
+
 %% get segments for EGG analysis and save as text file for peakdet2
 windows = get_windows(egg); % candidate windows to search for voicing onset
-
-%%
 % convert from samples to milliseconds
-windows = windows*1000/48000;
+windows = windows*1000/48000; % these are fake timestamps
 % save as text file
 tmp = char(filepath);
 savepath = strcat(tmp(1:end-3), "_windows.txt");
 dlmwrite(savepath, windows, 'delimiter', '\t');
 % save wav file for peakdet2 to load
 savepath = strcat(tmp(1:end-3), "_egg.wav");
-audiowrite(savepath, transpose(xdf{stream}.time_series), 48000);
+to_wav = transpose([egg; xdf{stream}.time_series(2,:)]);
+audiowrite(savepath, to_wav, 48000);
 
-% open peakdet2 and graphically verify its results, making sure to save
+%% open peakdet2 and graphically verify its results, making sure to save
 peakdet2
 
 %% convert peakdet2 output into markers for EEG 
