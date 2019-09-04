@@ -16,7 +16,7 @@ function [rims] = CRO(dSIG,COEF);
 %%%% Convention: positive values for closing peaks, negative values for opening peaks.
 
 % Sampling period: (T for: period, s for: sampling) 
-Ts = 1 / COEF(1);
+%Ts = 1 / COEF(1); commented out since unused 
 
 % retrieving user choice for amplitude threshold setting method
 toggle = COEF(3);

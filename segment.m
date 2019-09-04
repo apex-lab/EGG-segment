@@ -10,8 +10,9 @@ channel = 1; % which channel of EGG/audio is EGG
 addpath("functions", "peakdet2", "xdf-Matlab")
     
 %% extract EGG from xdf file
-xdf = load_xdf(filepath); 
+xdf = load_xdf(filepath, "HandleJitterRemoval", false); 
 egg = xdf{stream}.time_series(channel,:);
+egg_t = xdf{stream}.time_stamps;
 
 %% reverse filter to correct phase distortion from hardware filter
 x = fliplr(egg); % we apply forward filter to reverse-time EGG
@@ -20,30 +21,24 @@ y = highpass(x, 40, 48000);
 egg = fliplr(y);
 clear x y
 
-%% median filter to suppress device noise
-
-
-%% get segments for EGG analysis and save as text file for peakdet2
+%% get time windows of interest for EGG analysis 
 windows = get_windows(egg); % candidate windows to search for voicing onset
-% convert from samples to milliseconds
-windows = windows*1000/48000; % these are fake timestamps
-% save as text file
-tmp = char(filepath);
-savepath = strcat(tmp(1:end-3), "_windows.txt");
-dlmwrite(savepath, windows, 'delimiter', '\t');
-% save wav file for peakdet2 to load
-savepath = strcat(tmp(1:end-3), "_egg.wav");
-to_wav = transpose([egg; xdf{stream}.time_series(2,:)]);
-audiowrite(savepath, to_wav, 48000);
 
-%% open peakdet2 and graphically verify its results, making sure to save
-peakdet2
+%% get time stamps of first glottal closure in each window
+indices = get_markers(egg, windows);
+timestamps = egg_t(indices);
+timestamps = unique(timestamps); % remove duplicates, if any
 
-%% convert peakdet2 output into markers for EEG 
-markers = get_markers(egg, windows); % exact timestamps of voicing onset
+%% add glottal closures to xdf object as marker stream and save as mat
+s = length(xdf) + 1;
+xdf{s}.info.type = 'Markers';
+xdf{s}.info.type = 'glottis_closure_instants';
+xdf{s}.time_stamps = timestamps;
+num = length(timestamps);
+xdf{s}.time_series = repmat("TGCI", [1 num]); 
+% tage name means "time of glottis-closure instant"
 
-%% save as mat object that can be uploaded to EEGLab
-tags = to_eeglab(matlab);
+% save
 tmp = char(filepath);
 savepath = strcat(tmp(1:end-3), "_tags.mat");
-save(savepath, tags); % overwrites file "savepath" if already there
+save(savepath, 'xdf'); % overwrites file "savepath" if already there
