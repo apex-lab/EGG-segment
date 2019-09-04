@@ -2,7 +2,8 @@
 function markers = get_markers(egg, windows)
 % Returns indices of first closures found in the given windows of interest
 
-    num = szdim(windows, 1); % number of windows
+    sz = size(windows); 
+    num = sz(1); % number of windows
     markers = 1:num; % placeholder array
     for i = 1:num % loop through windows of interest
         idx = get_marker(egg(windows(i,1):windows(i,2)));
@@ -10,6 +11,7 @@ function markers = get_markers(egg, windows)
         hold on
         xline(idx);
         pause;
+        hold off
         markers(i) = windows(i,1) + idx - 1; % index in full time series
     end
     

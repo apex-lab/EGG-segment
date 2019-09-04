@@ -3,14 +3,14 @@
 % Tested with Matlab Version 9.6.0.1150989 (R2019a) Update 4
 
 %% hard coded variables
-filepath = "/home/john/Documents/EGG_pilot/sub-marisa/ses-S001/eeg/sub-marisa_ses-S001_task-8_acq-eeg-egg_run-001_eeg.xdf";
+filepath = '~/Documents/EGG_pilot/sub-marisa/ses-S001/eeg/sub-marisa_ses-S001_task-1_acq-eeg-egg_run-001_eeg.xdf';
 stream = 2; % which stream in the xdf file is EGG/audio
 channel = 1; % which channel of EGG/audio is EGG
 
 addpath("functions", "peakdet2", "xdf-Matlab")
     
 %% extract EGG from xdf file
-xdf = load_xdf(filepath, "HandleJitterRemoval", false); 
+xdf = load_xdf(filepath, 'HandleJitterRemoval', false); 
 egg = xdf{stream}.time_series(channel,:);
 egg_t = xdf{stream}.time_stamps;
 
