@@ -17,7 +17,7 @@ egg_t = xdf{stream}.time_stamps;
 %% reverse filter to correct phase distortion from hardware filter
 x = fliplr(egg); % we apply forward filter to reverse-time EGG
 % single pole reverse filter 
-y = highpass(x, 40, 48000);
+y = highpass(x, 20, 48000); % our EGG amp lets you choose between 10 & 20hz
 egg = fliplr(y);
 clear x y
 
@@ -27,7 +27,6 @@ windows = get_windows(egg); % candidate windows to search for voicing onset
 %% get time stamps of first glottal closure in each window
 indices = get_markers(egg, windows);
 timestamps = egg_t(indices);
-timestamps = unique(timestamps); % remove duplicates, if any
 
 %% add glottal closures to xdf object as marker stream and save as mat
 s = length(xdf) + 1;

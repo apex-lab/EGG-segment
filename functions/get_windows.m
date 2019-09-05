@@ -20,7 +20,7 @@ function windows = get_windows(egg)
 
     % now we take intervals before each remaining peak and slide back in 
     % time until the variance of the values in the window is near zero
-    var_length = 500;
+    var_length = 150;
     start = locs - var_length; % start of each window
     for i = 1:length(start)
         while var((egg(start(i):start(i)+var_length))) > 1e-4
@@ -31,5 +31,7 @@ function windows = get_windows(egg)
     % now we select our windows for further analysis as those 
     % beginning at "start" and ending at the peaks remaining in "locs"
     windows = transpose([start; locs]);
+    [~,idx,~] = unique(windows(:,1));
+    windows = windows(idx,:);
 
 end
