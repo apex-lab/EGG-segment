@@ -31,7 +31,7 @@ timestamps = egg_t(indices);
 %% add glottal closures to xdf object as marker stream and save as mat
 s = length(xdf) + 1;
 xdf{s}.info.type = 'Markers';
-xdf{s}.info.type = 'glottis_closure_instants';
+xdf{s}.info.name = 'glottis_closure_instants';
 xdf{s}.time_stamps = timestamps;
 num = length(timestamps);
 xdf{s}.time_series = repmat("TGCI", [1 num]); 
@@ -39,5 +39,5 @@ xdf{s}.time_series = repmat("TGCI", [1 num]);
 
 % save
 tmp = char(filepath);
-savepath = strcat(tmp(1:end-3), "_tags.mat");
+savepath = strcat(tmp(1:end-4), ".mat");
 save(savepath, 'xdf'); % overwrites file "savepath" if already there
