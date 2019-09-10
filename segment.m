@@ -3,7 +3,7 @@
 % Tested with Matlab Version 9.6.0.1150989 (R2019a) Update 4
 
 %% hard coded variables
-filepath = '~/Documents/EGG_pilot/sub-marisa/ses-S001/eeg/sub-marisa_ses-S001_task-1_acq-eeg-egg_run-001_eeg.xdf';
+filepath = '~/Documents/EGG_pilot/sub-marisa/ses-S001/eeg/sub-marisa_ses-S001_task-2_acq-eeg-egg_run-001_eeg.xdf';
 stream = 2; % which stream in the xdf file is EGG/audio
 channel = 1; % which channel of EGG/audio is EGG
 
@@ -27,6 +27,7 @@ windows = get_windows(egg); % candidate windows to search for voicing onset
 %% get time stamps of first glottal closure in each window
 indices = get_markers(egg, windows);
 timestamps = egg_t(indices);
+timestamps = timestamps(timestamps ~= 0); % remove caught errors
 
 %% add glottal closures to xdf object as marker stream and save as mat
 s = length(xdf) + 1;

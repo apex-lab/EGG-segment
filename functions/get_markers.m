@@ -6,7 +6,13 @@ function markers = get_markers(egg, windows)
     num = sz(1); % number of windows
     markers = 1:num; % placeholder array
     for i = 1:num % loop through windows of interest
-        idx = get_marker(egg(windows(i,1):windows(i,2)));
+        try
+            idx = get_marker(egg(windows(i,1):windows(i,2)));
+        catch
+            plot(egg(windows(i,1):windows(i,2)));
+            pause;
+            idx = 0; % so final marker will == 0
+        end
         markers(i) = windows(i,1) + idx - 1; % index in full time series
     end
     
@@ -27,14 +33,13 @@ function marker = get_marker(egg)
     
     % detect points where DEGG crosses threshold value
     auto = 0; % whether to use automatic threshold
-    threshold = 0.3*std(degg); % manual threshold if needed
+    threshold = 0.25*std(degg); % manual threshold if needed
     [rims] = CRO(degg, [0 0 auto threshold]);
     
     % detection of position of the peaks . . . 
     % AMPOS function recomputes the DEGG from the EGG for some 
     % reason, which is a waste of CPU time, but we use it "as is" to
     % stay consistent with literature that has used peakdet2.)
-    threshold = 0.3*std(degg);
     [Tgci,~,~,~] = AMPOS(egg, rims, 1, 1/48000, 1, threshold);
     idx = Tgci(1,1); % index of first closure in segment
     % plot marker for user to accept or reject
