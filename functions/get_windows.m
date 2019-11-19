@@ -20,11 +20,11 @@ function windows = get_windows(egg)
 
     % now we take intervals before each remaining peak and slide back in 
     % time until the variance of the values in the window is near zero
-    var_length = 150;
-    start = locs - var_length; % start of each window
+    var_length = 300;
+    start = max(locs - var_length,1); % start of each window
     for i = 1:length(start)
-        while var((egg(start(i):start(i)+var_length))) > 1e-4
-            start(i) = start(i) - 1;
+        while (var((egg(start(i):start(i)+var_length))) > 1e-5) && (start(i) > 1)
+            start(i) = max(start(i) - 1, 1);
         end
     end
     

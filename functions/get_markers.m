@@ -29,11 +29,11 @@ function marker = get_marker(egg)
     end
     
     % smooth DEGG as in peakdet2
-    degg = smoo(degg, 3);
+    degg = smoo(degg, 10);
     
     % detect points where DEGG crosses threshold value
     auto = 0; % whether to use automatic threshold
-    threshold = 0.25*std(degg); % manual threshold if needed
+    threshold = 0.7*std(degg); % manual threshold if needed
     [rims] = CRO(degg, [0 0 auto threshold]);
     
     % detection of position of the peaks . . . 
@@ -43,9 +43,10 @@ function marker = get_marker(egg)
     [Tgci,~,~,~] = AMPOS(egg, rims, 1, 1/48000, 1, threshold);
     idx = Tgci(1,1); % index of first closure in segment
     % plot marker for user to accept or reject
+    hold off
     plot(egg);
     hold on
-    plot(5*degg);
+    plot(10*degg);
     hold on
     xline(idx);
     pause;

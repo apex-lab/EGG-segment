@@ -1,4 +1,4 @@
-function [rims] = CRO(dSIG,COEF);
+function [rims] = CRO(dSIG,COEF)
 %%%%%%%%%%%%%%%%%%% CRO : Detection of positive peaks in an electroglottographic
 %%%%%%%%%%%%%%%%%%% signal, yielding the index of the points where the threshold
 %%%%%%%%%%%%%%%%%%% (set at: absolute value of minimum in negative part of the
