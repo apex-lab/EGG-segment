@@ -47,7 +47,7 @@ timestamps = egg_t(indices + 1);
 epoch = [-800 200]; % epoch boundaries relative to GCI in milliseconds
 epoch = epoch/1000*48000; % convert to samples
 for i = 1:length(indices) 
-    plot((epoch(1):epoch(2))/48, egg(indices(i)+epoch_s(1):indices(i)+epoch_s(2))); 
+    plot((epoch(1):epoch(2))/48, egg(indices(i)+epoch(1):indices(i)+epoch(2))); 
     hold on; 
     xline(0); 
     %sound(egg(indices(i)-10000:indices(i)+epoch(2)),48000); 
