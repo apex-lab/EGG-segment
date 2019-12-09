@@ -3,14 +3,19 @@
 % Tested with Matlab Version 9.6.0.1150989 (R2019a) Update 4
 
 %% hard coded variables
-filepath = '~/Documents/EGG/sub-P008/ses-S001/eeg/sub-P008_ses-S001_task-fastHum_run-001_eeg.xdf';
-stream = 2; % which stream in the xdf file is EGG/audio
-channel = 1; % which channel of EGG/audio is EGG
+filepath = '~/Documents/EGG/sub-P010/ses-S001/eeg/sub-P010_ses-S001_task-slowHum_run-001_eeg.xdf';
+channel = 1; % which channel of EGG/audio stream is EGG
 
 addpath('functions', 'peakdet2', 'xdf-Matlab')
     
 %% extract EGG from xdf file
 xdf = load_xdf(filepath, 'HandleJitterRemoval', false); 
+% find EGG/audio stream
+for i = 1:length(xdf)
+    if (xdf{i}.info.name == "AudioCaptureWin")
+        stream = i;
+    end
+end
 egg = xdf{stream}.time_series(channel,:);
 egg_t = xdf{stream}.time_stamps;
 
@@ -37,10 +42,26 @@ windows = get_windows(egg); % candidate windows to search for voicing onset
 %% get time stamps of first glottal closure in each window
 indices = get_markers(egg, windows);
 timestamps = egg_t(indices + 1);
+
+%% now view epochs of interest to make sure they trials aren't overlapping
+epoch = [-800 200]; % epoch boundaries relative to GCI in milliseconds
+epoch = epoch/1000*48000; % convert to samples
+for i = 1:length(indices) 
+    plot((epoch(1):epoch(2))/48, egg(indices(i)+epoch_s(1):indices(i)+epoch_s(2))); 
+    hold on; 
+    xline(0); 
+    %sound(egg(indices(i)-10000:indices(i)+epoch(2)),48000); 
+    hold off; 
+    prompt = 'Press (y) if trial is good, (n) if bad.';
+    status = input(prompt, 's');
+    if (status == 'n')
+        timestamps(i) = 0;
+    end
+end
 timestamps = timestamps(timestamps ~= 0); % remove caught errors
 
 %% add glottal closures to xdf object as marker stream and save as mat
-s = length(xdf) + 1;
+s = 3; %length(xdf) + 1;
 xdf{s}.info.type = 'Markers';
 xdf{s}.info.name = 'glottis_closure_instants';
 xdf{s}.time_stamps = timestamps;

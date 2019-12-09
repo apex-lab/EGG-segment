@@ -8,7 +8,7 @@ function markers = get_markers(egg, windows)
     for i = 1:num % loop through windows of interest
         try
             idx = get_marker(egg(windows(i,1):windows(i,2)));
-        catch
+        catch % if it doesn't find a peak
             plot(egg(windows(i,1):windows(i,2)));
             pause;
             idx = 0; % so final marker will == 0
@@ -49,7 +49,11 @@ function marker = get_marker(egg)
     plot(10*degg);
     hold on
     xline(idx);
-    pause;
+    prompt = 'Press (y) if marker is good, (n) if bad.';
+    status = input(prompt, 's');
+    if (status == 'n')
+        [idx,~,~] = ginput(1);
+    end
     hold off
     marker = idx;
 

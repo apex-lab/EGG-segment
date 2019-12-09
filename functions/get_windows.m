@@ -10,7 +10,7 @@ function windows = get_windows(egg)
     locs = 1:sz;
     locs(1) = locs_Rwave(1);
     for i = 2:sz(2)
-        if locs_Rwave(i) - locs_Rwave(i - 1) < 1000 % should be big enough
+        if locs_Rwave(i) - locs_Rwave(i - 1) < 6000 % should be big enough
             locs(i) = 0;                      % to encompass 2 consecutive
         else                                  % peaks of any speaker's f0
             locs(i) = locs_Rwave(i);
