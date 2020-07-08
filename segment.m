@@ -19,21 +19,16 @@ end
 egg = xdf{stream}.time_series(channel,:);
 egg_t = xdf{stream}.time_stamps;
 
-%% reverse filter to correct phase distortion from hardware filter
+%% reverse filter to offset phase distortion from hardware filter
 x = fliplr(egg); % we apply forward filter to reverse-time EGG
-% single pole reverse filter 
-y = highpass(x, 20, 48000); % our EGG amp lets you choose between 10 & 20hz
+% single pole reverse filter WITHOUT phase correction 
+firf = designfilt('highpassfir', 'FilterOrder', 1, ...
+    'CutoffFrequency', 20, 'SampleRate', 48000);
+y = filter(firf, x); % our EGG amp lets you choose between 10 & 20 hz hpf
 egg = fliplr(y);
+% remove high frequency noise WITH phase correction
 egg = lowpass(egg, 1000, 48000);
-% d = designfilt('bandstopiir','FilterOrder',2, ...
-%                'HalfPowerFrequency1',59,'HalfPowerFrequency2',61, ...
-%                'DesignMethod','butter','SampleRate',48000);
-% egg = filtfilt(d,egg);
-% d = designfilt('bandstopiir','FilterOrder',2, ...
-%                'HalfPowerFrequency1',119,'HalfPowerFrequency2',121, ...
-%                'DesignMethod','butter','SampleRate',48000);
-%egg = filtfilt(d,egg);
-clear x y %d
+clear x y firf
 
 %% get time windows of interest for EGG analysis 
 windows = get_windows(egg); % candidate windows to search for voicing onset
