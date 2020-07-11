@@ -8,12 +8,13 @@ function markers = get_markers(egg, windows)
     for i = 1:num % loop through windows of interest
         try
             idx = get_marker(egg(windows(i,1):windows(i,2)));
+            markers(i) = windows(i,1) + idx - 1;
         catch % if it doesn't find a peak
+            hold off;
             plot(egg(windows(i,1):windows(i,2)));
             pause;
-            idx = 0; % so final marker will == 0
+            markers(i) = 0;
         end
-        markers(i) = windows(i,1) + idx - 1; % index in full time series
     end
     
 end
@@ -32,7 +33,7 @@ function marker = get_marker(egg)
     degg = smoo(degg, 10);
     
     % detect points where DEGG crosses threshold value
-    auto = 0; % whether to use automatic threshold
+    auto = 1; % whether to use automatic threshold
     threshold = 0.7*std(degg); % manual threshold if needed
     [rims] = CRO(degg, [0 0 auto threshold]);
     

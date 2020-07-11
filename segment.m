@@ -3,7 +3,7 @@
 % Tested with Matlab Version 9.6.0.1150989 (R2019a) Update 4
 
 %% hard coded variables
-filepath = '~/Documents/EGG/sub-P010/ses-S001/eeg/sub-P010_ses-S001_task-slowHum_run-001_eeg.xdf';
+filepath = '~/Documents/EGG/sub-P021/ses-S001/eeg/sub-P021_ses-S001_task-slowBah_run-001_eeg.xdf';
 channel = 1; % which channel of EGG/audio stream is EGG
 
 addpath('functions', 'peakdet2', 'xdf-Matlab')
@@ -28,7 +28,7 @@ y = filter(firf, x); % our EGG amp lets you choose between 10 & 20 hz hpf
 egg = fliplr(y);
 % remove high frequency noise WITH phase correction
 egg = lowpass(egg, 1000, 48000);
-clear x y firf
+clear x y
 
 %% get time windows of interest for EGG analysis 
 windows = get_windows(egg); % candidate windows to search for voicing onset
@@ -36,12 +36,14 @@ windows = get_windows(egg); % candidate windows to search for voicing onset
 
 %% get time stamps of first glottal closure in each window
 indices = get_markers(egg, windows);
-timestamps = egg_t(indices + 1);
+indices = indices(indices ~= 0); % remove bad trials
+timestamps = egg_t(int64(indices + 1));
 
 %% now view epochs of interest to make sure they trials aren't overlapping
-epoch = [-800 200]; % epoch boundaries relative to GCI in milliseconds
+epoch = [-600 400]; % epoch boundaries relative to GCI in milliseconds
 epoch = epoch/1000*48000; % convert to samples
 for i = 1:length(indices) 
+    try
     plot((epoch(1):epoch(2))/48, egg(indices(i)+epoch(1):indices(i)+epoch(2))); 
     hold on; 
     xline(0); 
@@ -52,11 +54,13 @@ for i = 1:length(indices)
     if (status == 'n')
         timestamps(i) = 0;
     end
+    catch
+    end
 end
 timestamps = timestamps(timestamps ~= 0); % remove caught errors
 
 %% add glottal closures to xdf object as marker stream and save as mat
-s = 3; %length(xdf) + 1;
+s = length(xdf) + 1; 
 xdf{s}.info.type = 'Markers';
 xdf{s}.info.name = 'glottis_closure_instants';
 xdf{s}.time_stamps = timestamps;
